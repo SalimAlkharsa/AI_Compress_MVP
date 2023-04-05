@@ -4,13 +4,14 @@ from nltk.corpus import stopwords
 from itertools import combinations
 import networkx as nx
 import nltk
+import re
 nltk.download('punkt')
 nltk.download('stopwords')
 
 class Compresser:
     def __init__(self, text):
         self.text = text
-        self.mask_token = '[MASK]' # this is the token that will be replaced by the model
+        self.mask_token = '^*' # this is the token that will be replaced by the model
         '''
         self.summary = self.summarize()
         self.words = self.tokenize()
@@ -45,9 +46,19 @@ class Compresser:
         threshold = 0.1 # adjust this threshold as desired
         to_mask = [word for word, score in scores.items() if score < threshold]
         return to_mask
+    
+    def mask(self):
+        masked_text = self.text
+        words = masked_text.split()
+        for word in words:
+            if word not in self.key_words_:
+                masked_text = re.sub(r'\b{}\b'.format(re.escape(word)), self.mask_token, masked_text)
+        return masked_text
 
 #Just testing rq
 text = "The quick brown fox jumps over the lazy dog to eat the dog's food. The dog is now hungry and wants to eat the fox. The fox is now dead. The end."
 compresser = Compresser(text)
 words = compresser.key_words_
+masked = compresser.mask()
+print(masked)
 print(words)
