@@ -8,15 +8,13 @@ import re
 nltk.download('punkt')
 nltk.download('stopwords')
 
+
 class Compresser:
     def __init__(self, text):
         self.text = text
         self.mask_token = '^*' # this is the token that will be replaced by the model
-        '''
-        self.summary = self.summarize()
-        self.words = self.tokenize()
-        self.to_mask = self.get_keywords()
-        '''
+        #Gens
+        self.summary_ = self.summarize()
         self.words_ = self.tokenize()
         self.key_words_ = self.get_keywords()
         self.masked_text_ = self.mask()
@@ -81,7 +79,10 @@ compresser = Compresser(text) #the compresser injects the text to operate on
 words = compresser.key_words_ #these are the key words
 masked = compresser.masked_text_ #this is the masked text with ^* instead of the words
 unmasked_choices = compresser.unmask() #this is the unmasked text with the ^* replaced by the words but its a bunch of choices
+
+#Lols
 print(masked)
 print(words)
 print(compresser.reconstructed_text_)
 
+print(compresser.summary_)
