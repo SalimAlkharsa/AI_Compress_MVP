@@ -1,5 +1,7 @@
 from transformers import pipeline, BertTokenizer, BertForMaskedLM
+from sentence_transformers import SentenceTransformer
 from nltk.tokenize import sent_tokenize, word_tokenize
+from sklearn.metrics.pairwise import cosine_similarity
 from nltk.corpus import stopwords
 from itertools import combinations
 import networkx as nx
@@ -14,7 +16,7 @@ class Compresser:
         self.text = text
         self.mask_token = '^*' # this is the token that will be replaced by the model
         #Gens
-        self.summary_ = self.summarize()
+        #self.summary_ = self.summarize()
         self.words_ = self.tokenize()
         self.key_words_ = self.get_keywords()
         self.masked_text_ = self.mask()
@@ -23,7 +25,7 @@ class Compresser:
 
     def summarize(self):
         summarizer = pipeline("summarization", model="facebook/bart-large-cnn")
-        summary = summarizer(self.text, max_length=100, min_length=3, do_sample=False)
+        summary = summarizer(self.text, max_length=1000, min_length=3, do_sample=False)
         return summary[0]['summary_text']
     
     def tokenize(self):
@@ -44,7 +46,7 @@ class Compresser:
                 else:
                     graph.edges[u, v]['weight'] += 1
         scores = nx.pagerank(graph, weight='weight')
-        threshold = 0.5 # adjust this threshold as desired
+        threshold = 0.95 # adjust this threshold as desired
         to_mask = [word for word, score in scores.items() if score < threshold]
         return to_mask
     
@@ -63,7 +65,7 @@ class Compresser:
         masked_text = self.masked_text_.replace(self.mask_token, "[MASK]") #this is the masked text with ^* replaced by [MASK]
         unmasked_text = unmasker(masked_text)
         return unmasked_text
-    
+
     def reconstruct(self):
         reconstructed_text = self.masked_text_.replace(self.mask_token, "[MASK]")
         for result in self.unmasked_choices_:
@@ -72,17 +74,3 @@ class Compresser:
             reconstructed_text = reconstructed_text.replace("[MASK]", token_str, 1)
         reconstructed_text = reconstructed_text.replace("[MASK]", self.mask_token)
         return reconstructed_text
-
-#Just testing rq
-text = "The quick brown fox jumps over the lazy dog to eat the dog's food. The dog is now hungry and wants to eat the fox. The fox is now dead. The end."
-compresser = Compresser(text) #the compresser injects the text to operate on
-words = compresser.key_words_ #these are the key words
-masked = compresser.masked_text_ #this is the masked text with ^* instead of the words
-unmasked_choices = compresser.unmask() #this is the unmasked text with the ^* replaced by the words but its a bunch of choices
-
-#Lols
-print(masked)
-print(words)
-print(compresser.reconstructed_text_)
-
-print(compresser.summary_)
