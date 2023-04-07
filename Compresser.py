@@ -46,7 +46,7 @@ class Compresser:
                 else:
                     graph.edges[u, v]['weight'] += 1
         scores = nx.pagerank(graph, weight='weight')
-        threshold = 0.95 # adjust this threshold as desired
+        threshold = 0.05 # adjust this threshold as desired
         to_mask = [word for word, score in scores.items() if score < threshold]
         return to_mask
     

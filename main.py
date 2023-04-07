@@ -2,7 +2,7 @@ from Compresser import Compresser
 
 if __name__ == '__main__':
     #Read in the text from article1.txt
-    with open('article1.txt', 'r') as f:
+    with open('article2.txt', 'r') as f:
         text = f.read()
     
     #Create a Compresser object 
