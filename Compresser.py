@@ -12,7 +12,29 @@ nltk.download('stopwords')
 
 
 class Compresser:
+    '''
+    This class compresses a text by removing redundant information.
+    '''
     def __init__(self, text):
+        '''
+        text: the text to be compressed
+        attributes:
+            text: the text to be compressed
+            mask_token: the token that will be replaced by the model
+            summary_: the summary of the text
+            words_: the words in the text
+            key_words_: the key words in the text
+            masked_text_: the masked text
+            unmasked_choices_: the unmasked choices
+            reconstructed_text_: the reconstructed text
+        methods:
+            summarize: summarizes the text
+            tokenize: tokenizes the text
+            get_keywords: gets the keywords in the text by using PageRank
+            mask: masks the text
+            unmask: unmask the masked text by using BERT
+            reconstruct: reconstructs the text by replacing the masked tokens with the unmasked tokens
+        '''
         self.text = text
         self.mask_token = '^*' # this is the token that will be replaced by the model
         #Gens
@@ -24,11 +46,23 @@ class Compresser:
         self.reconstructed_text_ = self.reconstruct()
 
     def summarize(self):
+        '''
+        Summarizes the text.
+        Returns:
+            summary: The summary of the text.
+        '''
         summarizer = pipeline("summarization", model="facebook/bart-large-cnn")
         summary = summarizer(self.text, max_length=1000, min_length=3, do_sample=False)
         return summary[0]['summary_text']
     
     def tokenize(self):
+        '''
+        Tokenizes the text into sentences and words.
+        Returns:
+            words: The tokenized words, grouped by sentence. 
+            Each inner list represents a sentence and contains the individual
+            words as strings.
+        '''
         # Tokenize text into sentences and words
         sentences = sent_tokenize(self.text)
         words = [word_tokenize(sentence.lower()) for sentence in sentences]
@@ -38,6 +72,11 @@ class Compresser:
         return words
 
     def get_keywords(self):
+        '''
+        Gets the keywords in the text by using PageRank.
+        Returns:
+            to_mask: The keywords in the text.
+        '''
         graph = nx.Graph()
         for sentence in self.words_:
             for u, v in combinations(sentence, 2):
@@ -51,6 +90,11 @@ class Compresser:
         return to_mask
     
     def mask(self):
+        '''
+        Masks the text.
+        Returns:
+            masked_text: The masked text.
+        '''
         masked_text = self.text
         words = masked_text.split()
         for word in words:
@@ -59,6 +103,11 @@ class Compresser:
         return masked_text
     
     def unmask(self):
+        '''
+        Unmask the masked text by using BERT.
+        Returns:
+            unmasked_choices: The unmasked choices. The format is a JSON object represetning potential choices for each masked token.
+        '''
         tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
         model = BertForMaskedLM.from_pretrained('bert-base-uncased')
         unmasker = pipeline('fill-mask', model=model, tokenizer=tokenizer)
@@ -67,6 +116,15 @@ class Compresser:
         return unmasked_text
 
     def reconstruct(self):
+        '''
+        Reconstructs the text by replacing the masked tokens with the unmasked tokens.
+        This is done by replacing the list of unmasked choices by filling in the highest scoring
+        choice for each masked token.
+        To Do:
+            - Make this more robust by using the sentence embeddings to determine which choice is the best
+        Returns:
+            reconstructed_text: The reconstructed text.
+        '''
         reconstructed_text = self.masked_text_.replace(self.mask_token, "[MASK]")
         for result in self.unmasked_choices_:
             token_str = result[0]['token_str']
