@@ -77,17 +77,7 @@ class Compresser:
         Returns:
             to_mask: The keywords in the text.
         '''
-        graph = nx.Graph()
-        for sentence in self.words_:
-            for u, v in combinations(sentence, 2):
-                if not graph.has_edge(u, v):
-                    graph.add_edge(u, v, weight=1)
-                else:
-                    graph.edges[u, v]['weight'] += 1
-        scores = nx.pagerank(graph, weight='weight')
-        threshold = 0.05 # adjust this threshold as desired
-        to_mask = [word for word, score in scores.items() if score < threshold]
-        return to_mask
+        #blank
     
     def mask(self):
         '''
