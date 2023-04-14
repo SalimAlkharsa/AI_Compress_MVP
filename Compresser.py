@@ -7,6 +7,9 @@ from itertools import combinations
 import networkx as nx
 import nltk
 import re
+import os
+import requests
+from dotenv import load_dotenv
 nltk.download('punkt')
 nltk.download('stopwords')
 
@@ -94,7 +97,13 @@ class Compresser:
             - Figure out the hardware requirements for this
             - Figure out a way to standardize the testing procedure
         '''
-        pass
+        load_dotenv()
+        API_TOKEN = os.environ.get('Hugging_Face_Key')
+        API_URL = "https://api-inference.huggingface.co/models/gpt2"
+        headers = {"Authorization": f"Bearer {API_TOKEN}"}
+        payload = {"inputs": "Can you please let us know more details about your ",}
+        response = requests.post(API_URL, headers=headers, json=payload)
+        return response.json()
         
     
     def mask(self):

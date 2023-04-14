@@ -7,6 +7,9 @@ if __name__ == '__main__':
     
     #Create a Compresser object 
     compresser = Compresser(text)
+    print(compresser.get_keywords()) 
+    '''
+    Take out for now
     masked = compresser.masked_text_
     
     #Save that to a file called masked.txt
@@ -17,3 +20,4 @@ if __name__ == '__main__':
     #Save that to a file called reconstructed.txt
     with open('reconstructed.txt', 'w') as f:
         f.write(reconstructed)
+    '''
