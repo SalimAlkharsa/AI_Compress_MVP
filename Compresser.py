@@ -73,11 +73,29 @@ class Compresser:
 
     def get_keywords(self):
         '''
-        Gets the keywords in the text by using PageRank.
+        Get the key words by using 
         Returns:
             to_mask: The keywords in the text.
         '''
-        #blank
+        self.gpt2 = pipeline('text-generation', model='gpt2')
+        #set_seed(42)  # for reproducibility
+        '''
+        There are several challenges here. An initial prompt was generated in the GPT2_keyprompt.txt file.
+        However, this prompt is not good enough bc as is it will just add more text and the output will not
+        not be a list of words but rather it will not be controlled. So I need a way to essentaially control
+        the output. 
+        Once that is addressed; I need to first understand the hardware requirements for this. I am not sure
+        if I can run this on my laptop as is and if thats the case then this puts a damper on the project.
+        I also need to have a way for standardizing the testing prodcedure. I need to have a way to test
+        the model on a variety of texts and see how it performs. So that needs a short script that will
+        dictate how the model is tested.
+        TO DO:
+            - Figure out how to control the output of the GPT2 model
+            - Figure out the hardware requirements for this
+            - Figure out a way to standardize the testing procedure
+        '''
+        pass
+        
     
     def mask(self):
         '''

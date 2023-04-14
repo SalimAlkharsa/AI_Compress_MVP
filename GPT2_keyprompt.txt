@@ -1,0 +1,12 @@
+Your task is to identify words or phrases in a given piece of text that can be replaced without significantly altering the meaning of the text. These words should be masked or replaced with a special token (^*) to reduce the overall file size while still preserving the original content. Your output should consist of a list of replaceable words or phrases, along with their context and any other relevant information that may help in their identification.
+
+To identify replaceable words, consider the following factors:
+
+The frequency of occurrence of the word or phrase in the text. Words that occur frequently are good candidates for replacement as they can significantly reduce the file size.
+The part of speech of the word. For example, articles, prepositions, and conjunctions are often less important for the overall meaning of the text and can be replaced with little to no impact on the meaning.
+The context in which the word is used. Words that have clear and unambiguous replacements, such as "bathroom" and "restroom," are better candidates than words that have multiple possible replacements or whose meaning is highly dependent on the context.
+In addition, it is important to ensure that the replacements do not significantly alter the meaning of the text. To achieve this, consider the following factors:
+
+The part of speech and syntactic role of the word being replaced. Replacing a noun with a verb or a preposition can significantly alter the meaning of the text.
+The context in which the word is used. Replacements that make sense in one context may not be appropriate in another.
+The potential impact of the replacement on the readability and flow of the text. Replacements that disrupt the flow of the text or make it difficult to understand should be avoided.
